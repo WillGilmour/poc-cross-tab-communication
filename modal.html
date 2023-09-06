@@ -1,0 +1,24 @@
+<html>
+  <head></head>
+  <body>
+    <h1>Modal window</h1>
+    <input id="message" type="text" placeholder="Your message goes here" />
+    <script>
+      (function () {
+        const parent = window.opener;
+        const id = (urlParams = new URLSearchParams(window.location.search).get(
+          'modalId'
+        ));
+        setInterval(() => {
+          parent.postMessage(
+            {
+              modalId: id,
+              message: document.getElementById('message').value,
+            },
+            document.referrer
+          );
+        }, 100);
+      })();
+    </script>
+  </body>
+</html>

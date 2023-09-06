@@ -1,0 +1,28 @@
+<html>
+  <head></head>
+  <body>
+    <h1 id="message"></h1>
+  </body>
+  <script>
+    var modalWindow;
+    (function () {
+      function init() {
+        const modalId = crypto.randomUUID();
+        params = new URLSearchParams({
+          modalId,
+        });
+        modalWindow = window.open(`./modal.html?${params.toString()}`);
+        window.addEventListener('message', (event) => {
+          if (event.data.modalId === modalId) {
+            console.log(event.data.message);
+            populateMessage(event.data.message);
+          }
+        });
+      }
+      function populateMessage(message) {
+        document.getElementById('message').innerText = message;
+      }
+      init();
+    })();
+  </script>
+</html>
