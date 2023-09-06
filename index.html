@@ -1,26 +1,42 @@
 <html>
   <head></head>
   <body>
-    <h1 id="message"></h1>
+    <h1>Home</h1>
+    <p id="message">Open the modal and type a message</p>
+    <button id="launchModal">Click here to open modal</button>
   </body>
   <script>
     var modalWindow;
     (function () {
+      const modalId = crypto.randomUUID();
+      const messageEl = document.getElementById('message');
+      let messageCache = messageEl.innerText;
       function init() {
-        const modalId = crypto.randomUUID();
-        params = new URLSearchParams({
-          modalId,
-        });
-        modalWindow = window.open(`./modal.html?${params.toString()}`);
         window.addEventListener('message', (event) => {
           if (event.data.modalId === modalId) {
-            console.log(event.data.message);
             populateMessage(event.data.message);
           }
         });
+        document
+          .getElementById('launchModal')
+          .addEventListener('click', launchModal);
+      }
+      function launchModal() {
+        const params = new URLSearchParams({
+          modalId,
+        });
+        modalWindow = window.open(
+          `./modal.html?${params.toString()}`,
+          'modal',
+          'height=600, width=600'
+        );
       }
       function populateMessage(message) {
-        document.getElementById('message').innerText = message;
+        if (message.length) {
+          messageEl.innerText = message;
+        } else {
+          messageEl.innerText = messageCache;
+        }
       }
       init();
     })();
