@@ -6,37 +6,56 @@
     <button id="launchModal">Click here to open modal</button>
   </body>
   <script>
-    var modalWindow;
     (function () {
       const modalId = crypto.randomUUID();
       const messageEl = document.getElementById('message');
       let messageCache = messageEl.innerText;
       function init() {
+        populateMessage(getMessage());
         window.addEventListener('message', (event) => {
           if (event.data.modalId === modalId) {
             populateMessage(event.data.message);
           }
         });
-        document
-          .getElementById('launchModal')
-          .addEventListener('click', launchModal);
+        document.getElementById('launchModal').addEventListener('click', () => {
+          launchModal(getMessage());
+        });
       }
-      function launchModal() {
+      function getMessage() {
+        return new URLSearchParams(window.location.search).get('message');
+      }
+      function launchModal(message) {
         const params = new URLSearchParams({
           modalId,
         });
-        modalWindow = window.open(
+        if (message?.length) {
+          params.append('message', message);
+        }
+        window.open(
           `./modal.html?${params.toString()}`,
           'modal',
           'height=600, width=600'
         );
       }
       function populateMessage(message) {
-        if (message.length) {
+        let params;
+        if (message?.length) {
           messageEl.innerText = message;
+          params = new URLSearchParams({ message });
         } else {
           messageEl.innerText = messageCache;
+          params = new URLSearchParams();
         }
+        updateQueryString(params);
+      }
+      function updateQueryString(params) {
+        history.replaceState(
+          null,
+          '',
+          `${window.location.origin}${
+            window.location.pathname
+          }?${params.toString()}`
+        );
       }
       init();
     })();

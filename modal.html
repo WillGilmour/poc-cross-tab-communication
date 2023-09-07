@@ -6,14 +6,18 @@
     <script>
       (function () {
         const parent = window.opener;
-        const id = (urlParams = new URLSearchParams(window.location.search).get(
-          'modalId'
-        ));
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('modalId');
+        const inputMessage = document.getElementById('message');
+        const initialMessage = urlParams.get('message');
+        if (initialMessage) {
+          inputMessage.value = initialMessage;
+        }
         setInterval(() => {
           parent.postMessage(
             {
               modalId: id,
-              message: document.getElementById('message').value,
+              message: inputMessage.value,
             },
             document.referrer
           );
